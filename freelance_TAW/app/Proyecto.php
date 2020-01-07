@@ -8,7 +8,7 @@ class Proyecto extends Model
 {
     //
     protected $table = 'proyectos'; //Hace referencia a la tabla roles
-    protected $fillable = ['titulo', 'descripcion', 'iduser', 'inicio', 'fin', 'condicion']; //Campos de obtencion de datos
+    protected $fillable = ['id','titulo', 'descripcion', 'iduser', 'inicio', 'fin', 'condicion']; //Campos de obtencion de datos
 
     #UN PROYECTO PERTENECE A UN USUARIO
     public function user(){

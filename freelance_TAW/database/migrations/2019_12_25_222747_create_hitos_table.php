@@ -15,7 +15,7 @@ class CreateHitosTable extends Migration
     {
         Schema::create('hitos', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('titulo', 50);
+            $table->string('titulo', 50)->unique();
             $table->string('descripcion', 150);
             $table->dateTime('inicio');
             $table->dateTime('fin');

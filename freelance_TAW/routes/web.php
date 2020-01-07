@@ -19,6 +19,8 @@ Route::group(['middleware' => ['guest']], function(){
         return view('welcome');
     }); //Alias de la ruta
     
+    Route::get('/page', 'PageController@index')->name('page');
+
     /*Route::get('login', function () {
         return view('login');
     });*/
@@ -53,6 +55,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('/user/activar', 'UserController@activar');
         Route::get ('/user/selectUser', 'UserController@selectUser');
         Route::get ('/user/selectProgramador', 'UserController@selectProgramador');
+        Route::get ('/user/selectProgramadorTarea', 'UserController@selectProgramadorTarea');
 
         /*PRODUCTOS*/
         Route::get('/producto', 'ProductoController@index');
@@ -94,19 +97,21 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('/metodos/update', 'MetodoPagoController@update');
         Route::put('/metodos/desactivar', 'MetodoPagoController@desactivar');
         Route::put('/metodos/activar', 'MetodoPagoController@activar');
+        Route::get ('/metodos/selectMetodo', 'MetodoPagoController@selectMetodo');
 
-        /*PAGOS*/ 
+        /*PAGOS 
         Route::get('/pagos', 'PagosController@index');
         Route::get('/pagos/usuarios', 'PagosController@usuarios');
         Route::get('/pagos/metodos', 'PagosController@metodos');
         Route::post('/pagos/store', 'PagosController@store');
         Route::put('/pagos/update', 'PagosController@update');
         Route::put('/pagos/desactivar', 'PagosController@desactivar');
-        Route::put('/pagos/activar', 'PagosController@activar');
+        Route::put('/pagos/activar', 'PagosController@activar');*/
       
         /*PROYECTOS*/
         Route::get('/proyectos', 'ProyectoController@index');
         Route::post('/proyectos/registrar', 'ProyectoController@store');
+        Route::post('/proyectos/registrarCol', 'ProyectoController@storeCol');
         Route::put('/proyectos/actualizar', 'ProyectoController@update');
         Route::put('/proyectos/cancelar', 'ProyectoController@cancelar');
         Route::put('/proyectos/activar', 'ProyectoController@activar');
@@ -115,22 +120,78 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/hito', 'HitoController@index');
         Route::post('/hito/registrar', 'HitoController@store');
         Route::put('/hito/cancelar', 'HitoController@cancelar');
+        Route::put('/hito/completar', 'HitoController@completar');
+
+        /*COLABORADORES*/
+        Route::get('/colaborador', 'ColaboradorController@index');
+        Route::get('/colaboradorUsers', 'ColaboradorController@indexUsers');
+        Route::post('/colaborador/registrar', 'ColaboradorController@store');
+        Route::put('/colaborador/eliminar', 'ColaboradorController@eliminar');
+
+        /*TAREAS*/
+        Route::get('/tarea', 'TareaController@index');
+        Route::get('/tareaAll', 'TareaController@indexAll');
+        Route::post('/tarea/registrar', 'TareaController@store');
+        Route::put('/tarea/actualizar', 'TareaController@update');
+        Route::put('/tarea/cancelar', 'TareaController@cancelar');
+        Route::put('/tarea/completar', 'TareaController@completar');
+        Route::put('/tarea/pagar', 'TareaController@pagar');
+
+        /*CARTERA*/
+        Route::get('/cartera', 'CarteraController@index');
+        Route::get('/carteraAuth', 'CarteraController@indexAuth');
+
+        /*PAGOS*/
+        Route::get('/pago','PagosController@index');
+        Route::get('/pago/listarPdf','PagosController@listarPdf')->name('pagos.pdf');
     }); 
 
     //RUTAS PARA PROJECT MANAGER
     Route::group(['middleware'=>['PManager']],function(){
 
         /*PROYECTOS*/
-        Route::get('/proyectos', 'ProyectoController@index');
+        Route::get('/proyectosAuth', 'ProyectoController@indexAuth');
         Route::post('/proyectos/registrar', 'ProyectoController@store');
+        Route::post('/proyectos/registrarCol', 'ProyectoController@storeCol');
         Route::put('/proyectos/actualizar', 'ProyectoController@update');
         Route::put('/proyectos/cancelar', 'ProyectoController@cancelar');
         Route::put('/proyectos/activar', 'ProyectoController@activar');
 
+        /*HITOS*/
+        Route::get('/hitoAuth', 'HitoController@indexAuth');
+        Route::post('/hito/registrar', 'HitoController@store');
+        Route::put('/hito/cancelar', 'HitoController@cancelar');
+        Route::put('/hito/completar', 'HitoController@completar');
+
+        /*COLABORADORES*/
+        Route::get('/colaboradorAuthPM', 'ColaboradorController@indexAuthPM');
+        Route::get('/colaboradorUsers', 'ColaboradorController@indexUsers');
+        Route::post('/colaborador/registrar', 'ColaboradorController@store');
+        Route::put('/colaborador/eliminar', 'ColaboradorController@eliminar');
+
+        /*TAREAS*/
+        Route::get('/tareaAllAuth', 'TareaController@indexAllAuth');
+        Route::post('/tarea/registrar', 'TareaController@store');
+        Route::put('/tarea/actualizar', 'TareaController@update');
+        Route::put('/tarea/cancelar', 'TareaController@cancelar');
+        Route::put('/tarea/pagar', 'TareaController@pagar');
+
+        /*CARTERA*/
+        Route::get('/carteraAuth', 'CarteraController@indexAuth');
+
+        /*PAGOS*/
+        Route::get('/pagoAuth','PagosController@indexAuth');
+
+
+        Route::get ('/metodos/selectMetodo', 'MetodoPagoController@selectMetodo');
     });
 
     //RUTAS PARA DESARROLLADOR
     Route::group(['middleware'=>['Desarrollador']],function(){
+
+        /*TAREAS*/
+        Route::get('/tareaAuth', 'TareaController@indexAuth');
+        Route::put('/tarea/completar', 'TareaController@completar');
 
         /*PROYECTOS*/
         Route::get('/proyectos', 'ProyectoController@index');
@@ -138,19 +199,34 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('/proyectos/actualizar', 'ProyectoController@update');
         Route::put('/proyectos/cancelar', 'ProyectoController@cancelar');
         Route::put('/proyectos/activar', 'ProyectoController@activar');
-       
+
+        /*COLABORADORES*/
+        Route::get('/colaboradorAuth', 'ColaboradorController@indexAuth');
+
+        /*PAGOS*/
+        Route::get('/pagoAuth','PagosController@indexAuth');
     });
 
     //RUTAS PARA PROJECT CLIENTE
     Route::group(['middleware'=>['Cliente']],function(){
         
         /*PROYECTOS*/
-        Route::get('/proyectos', 'ProyectoController@index');
-        Route::post('/proyectos/registrar', 'ProyectoController@store');
-        Route::put('/proyectos/actualizar', 'ProyectoController@update');
-        Route::put('/proyectos/cancelar', 'ProyectoController@cancelar');
-        Route::put('/proyectos/activar', 'ProyectoController@activar');
+        Route::get('/proyectosAuthC', 'ProyectoController@indexAuthC');
+        Route::put('/proyectos/pagarP', 'ProyectoController@pagarP');
+        
+        Route::post('/reportes/registrar', 'ReportesController@store');
+        Route::get('/reportes', 'ReportesController@index');
+        Route::get('/reportesm', 'ReportesController@indexm');
+        Route::put('/reportes/atender', 'ReportesController@atender');
 
+        /*PAGOS*/
+        Route::get('/pagoAuth','PagosController@indexAuth');
+
+
+        Route::get ('/metodos/selectMetodo', 'MetodoPagoController@selectMetodo');
+
+        /*CARTERA*/
+        Route::get('/carteraAuth', 'CarteraController@indexAuth');
     });
 });    
 /*-----------------------

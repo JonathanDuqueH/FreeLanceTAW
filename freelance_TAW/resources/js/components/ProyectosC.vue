@@ -1,9 +1,9 @@
 <template>
 <div class="container">
-    <div class="page-title">
       <div class="title_left">
         <h3>Proyectos</h3>
       </div>
+    <div class="page-title">
     </div>
 
     <div class="clearfix"></div>
@@ -12,10 +12,7 @@
       <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
-            <h2>Administrar proyectos </h2>
-            <ul class="nav navbar-right panel_toolbox">
-              <li @click="abrirModal('proyecto', 'registrar')"><a ><i class="fa fa-plus-square"></i></a></li>
-            </ul>
+            <h2>Proyectos </h2>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
@@ -60,13 +57,12 @@
                         <td>
                           <center>
                             <ul class="nav navbar-center panel_toolbox">
-                              <template v-if="proyectos.condicion">
-                                <a @click="abrirModal('proyecto', 'usuario', proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-user"></i></a>
-                                <a @click="abrirModal('proyecto', 'hito', proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-check-square-o"></i></a>
-                                <a @click="abrirModal('proyecto', 'actualizar', proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-pencil-square-o"></i></a>
-                                <a @click="cancelarProyecto(proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-remove"></i></a>
-                                <a @click="abrirModalVista(proyectos)" href="#" class="dropdown-toggle" data-toggle="modal" data-target=".bs-example-modal-sm" aria-expanded="false"><i class="fa fa-eye"></i></a>
-                            </template>
+                              <template v-if="proyectos.condicion==1">
+                                <a @click="abrirModal('proyecto', ' ', proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-pencil-square-o"></i></a>
+                              </template>
+                              <template v-else-if="proyectos.condicion == 2">
+                                <a @click="abrirModal('proyecto', 'pagar', proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-dollar"></i></a>
+                              </template>
                               <template v-else>
                                 <a @click="activarProyecto(proyectos)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-check"></i></a>
                               </template>
@@ -135,126 +131,53 @@
         </div>
         <div class="modal-body">
           <form class="form-horizontal form-label-left" method="post">
-          
-          <template v-if="tipoAccion!=3">
 
-              <div v-if="tipoAccion==4">
-
-                <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cliente">Usuario: <span class="required">*</span>
-                  </label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                      <select v-model="iduser" class="form-control col-md-7 col-xs-12">
-                          <option value="0">Seleccione un colaborador</option>
-                          <option v-for="programador in arrayProgramador" :key="programador.id" :value="programador.id" v-text="programador.name"></option>
-                      </select>
-                  </div>
-                </div>
-
-              </div>
-              <div v-else>
-                  <div class="item form-group">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="titulodepartamento">Título de proyecto: <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="titulo" placeholder="Escriba titulo del nuevo proyecto" required="required" type="text">
-                    </div>
-                  </div>
-                
-                  <div class="item form-group">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cliente">Cliente: <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <select v-model="iduser" class="form-control col-md-7 col-xs-12">
-                            <option value="0">Seleccione un cliente</option>
-                            <option v-for="cliente in arrayCliente" :key="cliente.id" :value="cliente.id" v-text="cliente.name"></option>
-                        </select>
-                    </div>
-                  </div>
-                
-                  <div class="item form-group">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_inicio">Fecha de inicio: <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input v-model="inicio" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese fecha de inicio " required="required" type="date">
-                    </div>
-                  </div>
-                  <div class="item form-group">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Fecha de vencimiento: <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input v-model="fin" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese fecha de vencimiento " required="required" type="date">
-                    </div>
-                  </div>
-
-                <div class="item form-group">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Descripcion <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <textarea v-model="descripcion" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Descripcion"  rows="4" cols="50">
-                        </textarea>
-                    </div>
-                </div>
-
-                <div v-if="tipoAccion == 2">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="cliente">Estatus: <span class="required">*</span>
-                  </label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                      <select v-model="condicion" class="form-control col-md-7 col-xs-12">
-                          <option value="0">
-                            <div v-if="condicion==1">
-                              Activo
-                            </div>
-                            <div v-else-if="condicion==2">
-                              Terminado
-                            </div>
-                          </option>
-                          <option value="1">Activo</option>
-                          <option value="2">Terminado</option>     
-                      </select>
-                  </div>
+            <template v-if="tipoAccion==1">
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="titulodepartamento">Título de reporte: <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="titulo" placeholder="Escriba el titulo del reporte" required="required" type="text">
                 </div>
               </div>
-
-              <div v-show="errorProyecto" class="form-group row div-error">
-                <div class="text-center text-error">
-                    <div v-for="error in errorMostrarMsjProyecto" :key="error" v-text="error">
-
-                    </div>
+                  
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">mensaje <span class="required">*</span></label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <textarea v-model="mensaje" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="mensaje"  rows="4" cols="50"></textarea>
                 </div>
               </div>
             </template>
 
             <template v-else>
               <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="titulodepartamento">Título de hito: <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="titulo" placeholder="Escriba titulo del nuevo proyecto" required="required" type="text">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Monto a pagar: <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input v-model="cantidad" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese la cantidad a pagar " required="required" type="text">
+                  </div>
                 </div>
-              </div>
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_inicio">Fecha de inicio: <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input v-model="inicio" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese fecha de inicio " required="required" type="date">
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Metodo de pago:  <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select v-model="idmetodo" class="form-control col-md-7 col-xs-12">
+                          <option value="0">Seleccione metodo de pago</option>
+                          <option v-for="metodo in arrayMetodos" :key="metodo.id" :value="metodo.id" v-text="metodo.nombre"></option>
+                      </select>
+                  </div>
                 </div>
-              </div>
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Fecha de vencimiento: <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input v-model="fin" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese fecha de vencimiento " required="required" type="date">
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Tu saldo: <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <center><b><h4>{{"$"+yourMoney[3]['dinero']}}</h4></b></center>
+                  </div>
                 </div>
-              </div>
-              <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Descripcion <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <textarea v-model="descripcion" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Descripcion"  rows="4" cols="50">
-                    </textarea>
-                </div>
-              </div>
+            </template>
+
               <div v-show="errorProyecto" class="form-group row div-error">
                 <div class="text-center text-error">
                     <div v-for="error in errorMostrarMsjProyecto" :key="error" v-text="error">
@@ -262,17 +185,13 @@
                     </div>
                 </div>
               </div>
-            </template>
-          
           </form>
         </div>
         <div class="modal-footer">
             <button @click="cerrarModal()" type="button" class="btn btn-primary" >Cancelar</button>
             <button v-if="tipoAccion==1" @click="registrarProyecto()" type="button" class="btn btn-success">Guardar</button>
-            <button v-if="tipoAccion==2" @click="actualizarProyecto()" type="button" class="btn btn-success">Actualizar</button>
-            <button v-if="tipoAccion==3" @click="anadirHito()" type="button" class="btn btn-success">Añadir</button>
-            <button v-if="tipoAccion==4" @click="anadirUsuario()" type="button" class="btn btn-success">Añadir</button>
-        </div>
+            <button v-if="tipoAccion==2" @click="pagarTarea()" type="button" class="btn btn-success">Pagar</button>
+         </div>
       </div>
     </div>
   </div>
@@ -305,9 +224,15 @@
 export default{
   data (){
     return{
+      arrayMetodos: [],
+      idresponsable: 0,
+      cantidad: 0.0,
+      idmetodo: 0,
+      yourMoney: '',
       proyecto_id: 0,
       titulo: '',
-      descripcion: '',
+      mensaje: '',
+      descripcion:'',
       iduser: 0,
       inicio: '',
       fin: '',
@@ -367,7 +292,7 @@ export default{
     listarProyecto(page, buscar, criterio){
       let me=this;
       //RUTA PARA OBTENER DATOS
-      var url='/proyectos?page='+page+'&buscar='+buscar+'&criterio='+criterio;
+      var url='/proyectosAuthC?page='+page+'&buscar='+buscar+'&criterio='+criterio;
       axios.get(url).then(function (response){
           var respuesta = response.data;   
           console.log(respuesta);
@@ -378,17 +303,16 @@ export default{
       console.log(error);
       });
     },
-    //ABRIR MODAL VISTA
-    abrirModalVista(data=[]){
-      this.descripcion = data['descripcion'];
-      this.titulo = data['titulo'];
-    },
+ 
     //CERRAR MODAL
     cerrarModal(){
+      this.idmetodo= 0;
+      this.idresponsable= 0;
+      this.proyecto_id= 0,
       this.modal=0;
       this.tituloModal='';
       this.titulo='';
-      this.descripcion='';
+      this.mensaje='';
       this.inicio='';
       this.fin='';
       this.iduser=0;
@@ -397,104 +321,100 @@ export default{
     },
     //ABRIR MODAL REGISTRAR O ACTUALIZAR
     abrirModal(modelo, accion, data=[]){
+      
+      this.selectMetodo();
 
-        if(accion != 'hito'){
-          this.selectCliente();//LLAMAR PARA MOSTRAR LISTADO DE ROLES
-          //console.log(data);
-        }
-
-        if(accion == 'usuario'){
-          this.selectProgramador();
-        }
-
-        switch(modelo){
-            case "proyecto":
-            {
-                switch(accion){
-                    case 'registrar':
-                    {
+      switch(modelo){
+              case "proyecto":
+              {
+                  switch(accion){
+                      case ' ':
+                      {
+                        //console.log(data[idproducto]);
+                          this.modal = 1;
+                          this.tituloModal = 'Realizar reporte';
+                          this.proyecto_id=data['id'];
+                          this.titulo = '';
+                          this.mensaje = '';
+                          this.tipoAccion = 1;
+                          break;
+                      }
+                      case 'pagar':
+                      {
                         this.modal = 1;
-                        this.tituloModal = 'Registrar Proyecto';
-                        this.titulo = '';
-                        this.descripcion = '';
-                        this.inicio = '';
-                        this.fin = '';
-                        this.iduser = 0;
-                        this.tipoAccion = 1;
-                        break;
-                    }
-                    case 'actualizar':
-                    {
-                        this.modal = 1;
-                        this.tituloModal = 'Actualizar Proyecto';
-                        this.proyecto_id=data['id'];
+                        this.tituloModal = 'Pagar tarea';
+                        this.idresponsable = data['idresponsable'];
+                        this.proyecto_id = data['id'];
+                        this.cantidad = 0.0;
                         this.titulo = data['titulo'];
                         this.descripcion = data['descripcion'];
-                        this.inicio = data['inicio'];
-                        this.fin = data['fin'];
-                        this.iduser = data['iduser'];
-                        this.condicion = data['condicion'];
                         this.tipoAccion = 2;
                         break;
-                    }
-                    case 'hito':
-                    {
-                      this.iduser = 0;
-                      this.modal = 1;
-                      this.tituloModal = 'Añadir Hito';
-                      this.titulo = '';
-                      this.descripcion = '';
-                      this.inicio = '';
-                      this.fin = '';
-                      this.proyecto_id = data['id'];
-                      this.tipoAccion = 3;
-                      break;
-                    }
-                    case 'usuario':
-                    {
-                      this.iduser = 0;
-                      this.modal = 1;
-                      this.tituloModal = 'Añadir colaborador';
-                      this.proyecto_id = data['id'];
-                      this.tipoAccion = 4;
-                      break;
-                    }
-                }
-            }
+                      }
+                  }
+              }
+          }
+    },
+
+    selectMetodo(){
+        let me=this;
+        var url= '/metodos/selectMetodo';
+        axios.get(url).then(function (response) {
+           //console.log(response.data);
+            var respuesta= response.data;
+            me.arrayMetodos = respuesta.metodos;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+      },
+      pagarTarea(){
+        if (this.validarProyecto()){
+            return;
         }
-    },
-    selectCliente(){
-      let me=this;
-      var url= '/user/selectUser';
-      axios.get(url).then(function (response) {
-          var respuesta= response.data;
-          me.arrayCliente = respuesta.users;
-      })
-      .catch(function (error) {
+        
+        let me = this;
+
+        axios.put('/proyectos/pagarP',{
+            'id': this.pryecto_id,
+            'idresponsable': this.idresponsable,
+            'cantidad': this.cantidad,
+            'titulo': this.titulo,
+            'descripcion': this.descripcion,
+            'idmetodo': this.idmetodo
+        }).then(function (response) {
+            me.cerrarModal();
+            me.listarProyecto(1,'','titulo');
+            me.getMoney();
+            swal.fire(
+                'Hecho!',
+                'Pago realizado.',
+                'success'
+                )
+        }).catch(function (error) {
+            console.log(error);
+        });
+      },
+      getMoney(){
+        let me=this;
+        //RUTA PARA OBTENER DATOS
+        var url='/carteraAuth';
+        axios.get(url).then(function (response){
+          var respuesta = response.data;  
+          me.yourMoney = respuesta;
+        })
+        .catch(function (error){
           console.log(error);
-      });
-    },
-    selectProgramador(){
-      let me=this;
-      var url= '/user/selectProgramador';
-      axios.get(url).then(function (response) {
-          var respuesta= response.data;
-          me.arrayProgramador = respuesta.users;
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
-    },
+        });
+      },
+  
+ 
     validarProyecto(){
       this.errorProyecto=0;
       this.errorMostrarMsjProyecto =[];
 
       if (!this.titulo) this.errorMostrarMsjProyecto.push("El titulo no puede estar vacío.");
-      if (!this.descripcion) this.errorMostrarMsjProyecto.push("Por favor agregue una descripción.");
-      if (this.iduser==0 && this.tipoAccion!=3) this.errorMostrarMsjProyecto.push("Seleccione un cliente.");
-      if (!this.inicio) this.errorMostrarMsjProyecto.push("Por favor indique la fecha de inicio.");
-      if (!this.fin) this.errorMostrarMsjProyecto.push("Por favor indique la fecha de finalizacion.");
-
+    //  if (!this.mensaje) this.errorMostrarMsjProyecto.push("Por favor agregue el mensaje del reporte.");
       if (this.errorMostrarMsjProyecto.length) this.errorProyecto = 1;
 
       return this.errorProyecto;
@@ -507,12 +427,11 @@ export default{
       
       let me = this;
 
-      axios.post('/proyectos/registrar',{
+      axios.post('/reportes/registrar',{
           'titulo': this.titulo,
-          'descripcion': this.descripcion,
-          'iduser' : this.iduser,
-          'inicio' : this.inicio,
-          'fin' : this.fin
+          'mensaje': this.mensaje,
+          'idproyecto' : this.proyecto_id,
+          
       }).then(function (response) {
           me.cerrarModal();
           me.listarProyecto(1,'','titulo');
@@ -543,104 +462,7 @@ export default{
             console.log(error);
         });
     },
-    cancelarProyecto(data=[]){
-      swal.fire({
-      title: 'Esta seguro de cancelar este proyecto?',
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Aceptar!',
-      cancelButtonText: 'Cancelar',
-      confirmButtonClass: 'btn btn-success',
-      cancelButtonClass: 'btn btn-danger',
-      buttonsStyling: false,
-      reverseButtons: true
-      }).then((result) => {
-      if (result.value) {
-          let me = this;
-
-          axios.put('/proyectos/cancelar',{
-              'id': data['id'],
-              'iduser': data['iduser'] 
-          }).then(function (response) {
-              me.listarProyecto(1,'','titulo');
-              swal.fire(
-              'Hecho!',
-              'Proyecto cancelado.',
-              'success'
-              )
-          }).catch(function (error) {
-              console.log(error);
-          });
-          
-          
-      } else if (
-          // Read more about handling dismissals
-          result.dismiss === swal.DismissReason.cancel
-      ) {
-          
-      }
-      }) 
-    },
-    activarProyecto(data=[]){
-      swal.fire({
-      title: 'Esta seguro de reactivar este proyecto?',
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Aceptar!',
-      cancelButtonText: 'Cancelar',
-      confirmButtonClass: 'btn btn-success',
-      cancelButtonClass: 'btn btn-danger',
-      buttonsStyling: false,
-      reverseButtons: true
-      }).then((result) => {
-      if (result.value) {
-          let me = this;
-
-          axios.put('/proyectos/activar',{
-              'id': data['id'],
-              'iduser': data['iduser'] 
-          }).then(function (response) {
-              me.listarProyecto(1,'','titulo');
-              swal.fire(
-              'Activado!',
-              'Proyecto activado.',
-              'success'
-              )
-          }).catch(function (error) {
-              console.log(error);
-          });
-          } else if (
-              // Read more about handling dismissals
-              result.dismiss === swal.DismissReason.cancel
-          ) {
-      }
-      }) 
-    },
-    anadirHito(){
-
-      if (this.validarProyecto()){
-          return;
-      }
-      
-      let me = this;
-
-      axios.post('/hito/registrar',{
-          'titulo': this.titulo,
-          'descripcion': this.descripcion,
-          'idproyecto' : this.proyecto_id,
-          'inicio' : this.inicio,
-          'fin' : this.fin
-      }).then(function (response) {
-          me.cerrarModal();
-          me.listarProyecto(1,'','titulo');
-      }).catch(function (error) {
-          console.log(error);
-      });
-    },
+    
     cambiarPagina(page,buscar,criterio){
         let me = this;
         //Actualiza la página actual
@@ -651,6 +473,7 @@ export default{
   },
   mounted (){
     this.listarProyecto(1,this.buscar,this.criterio);
+      this.getMoney();
   }
 }
 </script>

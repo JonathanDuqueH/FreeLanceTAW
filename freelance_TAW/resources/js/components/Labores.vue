@@ -16,7 +16,7 @@
       <div class="x_panel">
         <div class="x_title">
           <h2>
-             Productos / Servicios
+             Relación de carga laboral
           </h2>
           <div class="clearfix"></div>
         </div>
@@ -24,10 +24,10 @@
           <div class="" role="tabpanel" data-example-id="togglable-tabs">
             <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
               <li role="presentation" class="active">
-                <a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Productos</a>
+                <a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Proyectos</a>
               </li>
               <li role="presentation" class="">
-                <a href="#tab_content2" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Servicios</a>
+                <a href="#tab_content2" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Tareas</a>
               </li>     
             </ul>
             <div id="myTabContent" class="tab-content">
@@ -37,65 +37,36 @@
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
                       <div class="x_title">
-                        <h2>Productos registrados</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                          <li @click="abrirModal('producto', 'registrar')"><a ><i class="fa fa-plus-square"></i></a></li>
-                        </ul>
+                        <h2>Proyectos - Colaboradores</h2>
                         <div class="clearfix"></div>
                       </div>
                       <div class="x_content">
                         <div id="datatable-wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                           <div class="row">
                             <div class="col-sm-6">
-                              <div class="dataTables_length" id="datatable_length">
-                                  <label>
-                                  Buscar:
-                                  <input type="text" v-model="buscar" @keyup.enter="listarProducto(1,buscar,criterio)" placeholder="Buscar por producto" class="form-control input-sm">
-                                  <button type="submit" @click="listarProducto(1,buscar,criterio)" class="form-control input-sm" aria-controls="datatable">Buscar</button>
-                                  </label>
-                              </div>
                             </div>
                             <div class="col-sm-12">
                               <table id="datatable" class="table table-striped table-bordered" role="grid" aria-describedby="datatable_info">
                                 <thead>
                                   <tr>
-                                    <th><center>Acciones</center></th>                
-                                    <th><center>Producto</center></th>
-                                    <th><center>Precio</center></th>
-                                    <th><center>Proveedor</center></th>
-                                    <th><center>Estado</center></th>
+                                    <th><center>Proyecto</center></th>
+                                    <th><center>Colaboradores</center></th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="producto in arrayProducto" :key="producto.id">
+                                  <tr v-for="colaborador in arrayColaborador" :key="colaborador.id">
+                                    <td v-text="colaborador.titulo"></td>
                                     <td>
-                                      <center>
-                                        <ul class="nav navbar-center panel_toolbox">
-                                          <a @click="abrirModal('producto', 'actualizar', producto)" class="dropdown-toggle" role="button"><i class="fa fa-pencil-square-o"></i></a>
-                                          <template v-if="producto.condicion">
-                                              <a @click="desactivarProducto(producto.id)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-remove"></i></a>
-                                          </template>
-                                          <template v-else>
-                                              <a @click="activarProducto(producto.id)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-check"></i></a>
-                                          </template>
-                                        </ul>
-                                      </center>
-                                    </td>
-                                    <td v-text="producto.nombre"></td>
-                                    <td v-text="'$'+producto.costo"></td>
-                                    <td>
-                                      {{ producto.direccion_proveedor }}
-                                      <a @click="open_link(producto.direccion_proveedor)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-external-link"></i></a>
-                                    </td>
-                                    <td>
-                                      <center>
-                                        <div v-if="producto.condicion">
-                                            <span class="label label-success">Disponible</span>
+                                      <div v-for="user in arrayUsuarios" :key="user.idproyecto">
+                                        <div v-if="colaborador.id == user.idproyecto">
+                                          <span class="tag">
+                                              <span v-text="user.name"></span>
+                                              <a @click="eliminarColaborador(user.id)" v-if="user.rol!=1 && user.rol!=2" href="#" title="Remover usuario">x</a>
+                                              <a v-if="user.rol==1" href="#" title="Remover usuario"><b>A</b></a>
+                                              <a v-if="user.rol==2" href="#" title="Remover usuario"><b>PM</b></a>
+                                          </span>
                                         </div>
-                                        <div v-else>
-                                            <span class="label label-danger">No disponible</span>
-                                        </div>
-                                      </center>
+                                      </div>
                                     </td>
                                   </tr>
                                 </tbody>
@@ -139,10 +110,7 @@
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
                       <div class="x_title">
-                        <h2>Servicios registrados</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                          <li @click="abrirModalServ('servicio', 'registrar')"><a ><i class="fa fa-plus-square"></i></a></li>
-                        </ul>
+                        <h2>Asignaciones de tareas</h2>
                         <div class="clearfix"></div>
                       </div>
                       <div class="x_content">
@@ -152,8 +120,8 @@
                               <div class="dataTables_length" id="datatable_length">
                                   <label>
                                   Buscar:
-                                  <input type="text" v-model="buscarServ" @keyup.enter="listarServicio(1,buscarServ,criterioServ)" placeholder="Buscar por producto" class="form-control input-sm">
-                                  <button type="submit" @click="listarServicio(1,buscarServ,criterioServ)" class="form-control input-sm" aria-controls="datatable">Buscar</button>
+                                  <input type="text" v-model="buscarCol" @keyup.enter="listarProducto(1,buscarCol,criterioCol)" placeholder="Buscar por titulo" class="form-control input-sm">
+                                  <button type="submit" @click="listarProducto(1,buscarCol,criterioCol)" class="form-control input-sm" aria-controls="datatable">Buscar</button>
                                   </label>
                               </div>
                             </div>
@@ -163,39 +131,50 @@
                                   <tr>
                                     <th><center>Acciones</center></th>                
                                     <th><center>Título</center></th>
-                                    <th><center>Producto</center></th>
-                                    <th><center>Cargos</center></th>
-                                    <th><center>Estado</center></th>
+                                    <th><center>Descripcion</center></th>
+                                    <th><center>Fecha de inicio</center></th>
+                                    <th><center>Fecha de vencimiento</center></th>
+                                    <th><center>Usuario asignado</center></th>
+                                    <th><center>Estatus</center></th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="servicio in arrayServicio" :key="servicio.id">
+                                  <tr v-for="tarea in arrayTareas" :key="tarea.id">
                                     <td>
                                       <center>
                                         <ul class="nav navbar-center panel_toolbox">
-                                          <a @click="abrirModalServ('servicio', 'actualizar', servicio)" class="dropdown-toggle" role="button"><i class="fa fa-pencil-square-o"></i></a>
-                                          <template v-if="servicio.estado">
-                                              <a @click="desactivarServicio(servicio.idserv)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-remove"></i></a>
+                                          <template v-if="tarea.condicion && tarea.pagado == '0'">
+                                            <a @click="abrirModalServ('tareas', 'pagar', tarea)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-dollar"></i></a>
+                                          </template>
+                                          <template v-else-if="tarea.condicion && tarea.pagado=='1'">
+                                            <a @click="cancelarTarea(tarea.id)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-remove"></i></a>
                                           </template>
                                           <template v-else>
-                                            <a @click="activarServicio(servicio.idserv)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-check"></i></a>
-                                          </template>
-                                          <template>
-                                            <a @click="abrirModalVista(servicio)" href="#" class="dropdown-toggle" data-toggle="modal" data-target=".bs-example-modal-sm" aria-expanded="false"><i class="fa fa-eye"></i></a>
+                                            <a @click="abrirModalServ('tareas', 'actualizar', tarea)" class="dropdown-toggle" role="button"><i class="fa fa-pencil-square-o"></i></a>
+                                            <a @click="cancelarTarea(tarea.id)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-remove"></i></a>
+                                            <a @click="completarTarea(tarea.id)" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-check"></i></a>
                                           </template>
                                         </ul>
                                       </center>
                                     </td>
-                                    <td v-text="servicio.titulo"></td>
-                                    <td v-text="servicio.nombre"></td>
-                                    <td v-text="'$'+servicio.costoserv"></td>
+                                    <td v-text="tarea.titulo"></td>
+                                    <td v-text="tarea.descripcion"></td>
+                                    <td v-text="tarea.inicio"></td>
+                                    <td v-text="tarea.fin"></td>
+                                    <td v-text="tarea.name"></td>
                                     <td>
                                       <center>
-                                        <div v-if="servicio.estado">
-                                            <span class="label label-success">Activo</span>
+                                        <div v-if="tarea.condicion">
+                                            <span class="label label-success">Completada</span>
+                                            <div v-if="tarea.pagado">
+                                              <span class="label label-success">Pagada</span>
+                                            </div> 
+                                            <div v-else>
+                                              <span class="label label-warning">No pagada</span>
+                                            </div>
                                         </div>
                                         <div v-else>
-                                            <span class="label label-danger">Inactivo</span>
+                                            <span class="label label-warning">En curso</span>
                                         </div>
                                       </center>
                                     </td>
@@ -213,17 +192,17 @@
                                 <div class="dataTables_paginate paging_simple_numbers" id="datatable_paginate">
                                     <ul class="pagination">
                                         <!--Si la pagina es mayor que la primera mostrar-->
-                                        <li class="paginate_button previous" id="datatable_previous" v-if="paginationServicios.current_page > 1">
+                                        <li class="paginate_button previous" id="datatable_previous" v-if="paginationColab.current_page > 1">
                                             <!--Si le damos a anterior se le resta 1 en la pagina que nos encontremos-->
-                                            <a href="#" aria-controls="datatable" @click.prevent="cambiarPaginaServ(paginationServicios.current_page - 1,buscarServ,criterioServ)"> Anterior</a>
+                                            <a href="#" aria-controls="datatable" @click.prevent="cambiarPaginaServ(paginationColab.current_page - 1,buscarCol,criterioCol)"> Anterior</a>
                                         </li>
                                         <!--Iteramos para obtener el numero de paginas-->
                                         <li class="paginate_button" v-for="page in pagesNumberServ" :key="page" :class="[page==isActived ? 'active' : '']">
                                             <a href="#" aria-controls="datatable" @click.prevent="cambiarPaginaServ(page,buscar,criterio)" v-text="page"></a>
                                         </li>
-                                        <li class="paginate_button next" id="datatable_next" v-if="paginationServicios.current_page < pagination.last_page">
+                                        <li class="paginate_button next" id="datatable_next" v-if="paginationColab.current_page < pagination.last_page">
                                             <!--Si le damos a siguiente se le suma 1 en la pagina que nos encontremos-->
-                                            <a href="#" aria-controls="datatable" @click.prevent="cambiarPaginaServ(paginationServicios.current_page + 1,buscarServ,criterioServ)"> Siguiente</a>
+                                            <a href="#" aria-controls="datatable" @click.prevent="cambiarPaginaServ(paginationColab.current_page + 1,buscarCol,criterioCol)"> Siguiente</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -248,7 +227,7 @@
 
 
 <!-- modals -->
-<!-- MODAL - REGISTRAR/ACTUALIZAR -SERVICES- -->
+<!-- MODAL - REGISTRAR/ACTUALIZAR -TAREAS- -->
     <div class="modal fade bs-example-modal-lg" tabindex="-1" :class="{'mostrar' : modalServ}" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -259,33 +238,15 @@
           </div>
           <div class="modal-body">
             <form class="form-horizontal form-label-left" method="post">
+              <template v-if="tipoAccionServ==1">
                 <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Titulo de servicio: <span class="required">*</span>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">Titulo de tarea: <span class="required">*</span>
                 </label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Nombre de producto" type="text">
+                    <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Titulo de tarea" type="text">
                 </div>
                 </div>
                 
-                <div class="item form-group">
-                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="website">Producto <span class="required">*</span>
-                  </label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                      <select v-model="idproducto" class="form-control col-md-7 col-xs-12">
-                          <option value="0">Nombre de producto</option>
-                          <option v-for="producto in arrayProdSelect" :key="producto.id" :value="producto.id" v-text="producto.nombre"></option>
-                      </select>
-                  </div>
-                </div>
-
-                <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Tiempo estimado de ejecucion: <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input v-model="tiempo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Tiempo" type="text">
-                </div>
-                </div>
-
                 <div class="item form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Descripción: <span class="required">*</span>
                 </label>
@@ -293,15 +254,64 @@
                     <input v-model="descripcion" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Descripcion del servicio" type="text">
                 </div>
                 </div>
-                
+
                 <div class="item form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Cargos: <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input v-model="costoserv" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Costo del producto" type="text">
-                </div>
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Usuario:  <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select v-model="idcolaborador" class="form-control col-md-7 col-xs-12">
+                          <option value="0">Usuario</option>
+                          <option v-for="usuario in arrayUsuarios" :key="usuario.id" :value="usuario.id" v-text="usuario.name"></option>
+                      </select>
+                  </div>
                 </div>
 
+                <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_inicio">Fecha de inicio: <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input v-model="inicio" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese fecha de inicio " required="required" type="date">
+                </div>
+              </div>
+              <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Fecha de vencimiento: <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input v-model="fin" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese fecha de vencimiento " required="required" type="date">
+                </div>
+              </div>
+              </template>
+
+              <template v-if="tipoAccionServ==2">
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Monto a pagar: <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input v-model="cantidad" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="name" placeholder="Ingrese la cantidad a pagar " required="required" type="text">
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12">Metodo de pago:  <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select v-model="idmetodo" class="form-control col-md-7 col-xs-12">
+                          <option value="0">Seleccione metodo de pago</option>
+                          <option v-for="metodo in arrayMetodos" :key="metodo.id" :value="metodo.id" v-text="metodo.nombre"></option>
+                      </select>
+                  </div>
+                </div>
+
+                <div class="item form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="fecha_fin">Tu saldo: <span class="required">*</span>
+                  </label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <center><b><h4>{{"$"+yourMoney[0]['dinero']}}</h4></b></center>
+                  </div>
+                </div>
+
+              </template>
+                
                 <div v-show="errorServ" class="form-group row div-error">
                     <div class="text-center text-error">
                         <div v-for="error in errorMostrarMsjServ" :key="error" v-text="error">
@@ -314,108 +324,49 @@
 
         <div class="modal-footer">
             <button @click="cerrarModalServ()" type="button" class="btn btn-primary">Cancelar</button>
-            <button v-if="tipoAccionServ==1" @click="registrarServicio()" type="button" class="btn btn-success">Guardar</button>
-            <button v-if="tipoAccionServ==2" @click="actualizarServicio()" type="button" class="btn btn-success">Actualizar</button>
+            <button v-if="tipoAccionServ==1" @click="actualizarTarea()" type="button" class="btn btn-success">Actualizar</button>
+            <button v-if="tipoAccionServ==2" @click="pagarTarea()" type="button" class="btn btn-success">Pagar</button>
         </div>
 
         </div>
       </div>
     </div>
-<!-- MODAL - REGISTRAR/ACTUALIZAR -PRODUCTOS- -->
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button @click="cerrarModal()" type="button" class="close"><span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title" v-text="tituloModal"></h4>
-                </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal form-label-left" method="post">
-                            <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Nombre del producto: <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input v-model="nombre" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Nombre de producto" type="text">
-                            </div>
-                            </div>
-                            <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Costo: <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input v-model="costo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Costo del producto" type="text">
-                            </div>
-                            </div>
-                            <div class="item form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Direccion del proveedor: <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input v-model="direccion_proveedor" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" data-validate-words="2" placeholder="Enlace" type="text">
-                            </div>
-                            </div>
-                            
-                            <div v-show="errorProduct" class="form-group row div-error">
-                                <div class="text-center text-error">
-                                    <div v-for="error in errorMostrarMsjProduct" :key="error" v-text="error">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button @click="cerrarModal()" type="button" class="btn btn-primary">Cancelar</button>
-                        <button v-if="tipoAccion==1" @click="registrarProducto()" type="button" class="btn btn-success">Guardar</button>
-                        <button v-if="tipoAccion==2" @click="actualizarProducto()" type="button" class="btn btn-success">Actualizar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--descripciòn de servicios -->
-<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-sm">
-                      <div class="modal-content">
-
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-                          </button>
-                          <h4 class="modal-title" id="myModalLabel2" v-text="'Servicio: '+titulo" >Servicio:</h4>
-                        </div>
-                        <div class="modal-body">
-                          <h4></h4>
-                          <p v-text="descripcion"></p>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-
-                      </div>
-                    </div>
-                  </div>
-
-<!--descripciòn de servicios  -->
-    </div>
+  </div>
 </template>
 
 <script>
   export default{
     data (){
       return{
-        /* SERVICIOS */
-        servicio_id: 0,
+        busqueda: '',
+        cantidad: 0.0,
+        tarea_id: 0,
+        colaborador_id: 0,
         titulo: '',
-        tiempo: '',
-        idproducto: 0,
         descripcion: '',
-        costoserv: 0.0,
-        arrayServicio: [],
-        arrayProdSelect: [],
+        inicio: '',
+        fin: '',
+        idhito: '',
+        condicion: '',
+        yourMoney: '',
+
+        idmetodo: 0,
+        idproyecto: 0,
+        idcolaborador: 0,
+        idproducto: 0,
+        arrayColaborador: [],
+        arrayTareas: [],
+        arrayUsuarios: [],
+        arrayMetodos: [],
+        
         modalServ: 0,
         tituloModalServ: '',
         tipoAccionServ: 0,
         errorServ: [],
         errorMostrarMsjServ: [],
-        paginationServicios:{
+
+
+        paginationColab:{
             'total': 0,
             'current_page': 0,
             'per_page': 0,
@@ -423,9 +374,9 @@
             'from' : 0,
             'to' : 0,
         },
-        offsetServ : 4,
-        criterioServ: 'titulo',
-        buscarServ: '',
+        offsetCol : 4,
+        criterioCol: 'titulo',
+        buscarCol: '',
         /* --------- */
         producto_id: 0,
         nombre: '',
@@ -446,14 +397,14 @@
             'to' : 0,
         },
         offset : 4,
-        criterio: 'name',
+        criterio: 'titulo',
         buscar: ''
       }
     },
     computed:{
         isActived: function(){
                 return this.pagination.current_page;
-                return this.paginationServicios.current_page;
+                return this.paginationColab.current_page;
             },
             //Calcula los elementos de la paginación
             pagesNumber: function() {
@@ -481,18 +432,18 @@
             },
             //Calcula los elementos de la paginación
             pagesNumberServ: function() {
-                if(!this.paginationServicios.to) {
+                if(!this.paginationColab.to) {
                     return [];
                 }
                 
-                var from = this.paginationServicios.current_page - this.offsetServ; 
+                var from = this.paginationColab.current_page - this.offsetCol; 
                 if(from < 1) {
                     from = 1;
                 }
 
-                var to = from + (this.offsetServ * 2); 
-                if(to >= this.paginationServicios.last_page){
-                    to = this.paginationServicios.last_page;
+                var to = from + (this.offsetCol * 2); 
+                if(to >= this.paginationColab.last_page){
+                    to = this.paginationColab.last_page;
                 }  
 
                 var pagesArrayServ = [];
@@ -510,11 +461,11 @@
       listarProducto(page, buscar, criterio){
         let me=this;
         //RUTA PARA OBTENER DATOS
-        var url='/producto?page='+page+'&buscar='+buscar+'&criterio='+criterio;
+        var url='/tareaAll?page='+page+'&buscar='+buscar+'&criterio='+criterio;
         axios.get(url).then(function (response){
           var respuesta = response.data;  
-          me.arrayProducto = respuesta.productos.data;
-          me.pagination = respuesta.pagination;
+          me.arrayTareas = respuesta.tareas.data;
+          me.paginationColab = respuesta.pagination;
         })
         .catch(function (error){
           console.log(error);
@@ -575,6 +526,7 @@
       //CERRAR MODAL
       cerrarModal(){
           this.modal=0;
+          this.modalServ = 0;
           this.tituloModal='';
           this.nombre='';
           this.costo=0;
@@ -594,9 +546,9 @@
 
         return this.errorProduct;
       },
-      desactivarProducto(id){
+      eliminarColaborador(id){
         swal.fire({
-          title: 'Esta seguro de desabilitar este producto?',
+          title: 'Esta seguro de elminiar este colaborador?',
           type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -611,13 +563,14 @@
           if (result.value) {
               let me = this;
 
-            axios.put('/producto/desactivar',{
+            axios.put('/colaborador/eliminar',{
                 'id': id
             }).then(function (response) {
                 me.listarProducto(1,'','nombre');
+                me.listarUsuarios();
                 swal.fire(
                 'Hecho!',
-                'Producto desabilitado.',
+                'Usuario eliminado.',
                 'success'
                 )
             }).catch(function (error) {
@@ -669,96 +622,78 @@
         }
         }) 
       },
-      //ABRIR MODAL REGISTRAR O ACTUALIZAR
-      abrirModal(modelo, accion, data=[]){
-          //this.selectRol();//LLAMAR PARA MOSTRAR LISTADO DE ROLES
-          console.log(data);
-          switch(modelo){
-              case "producto":
-              {
-                  switch(accion){
-                      case 'registrar':
-                      {
-                          this.modal = 1;
-                          this.tituloModal = 'Registrar Producto';
-                          this.nombre = '';
-                          this.costo = 0.0;
-                          this.direccion_proveedor = '';
-                          this.tipoAccion = 1;
-                          break;
-                      }
-                      case 'actualizar':
-                      {
-                          this.modal = 1;
-                          this.tituloModal = 'Actualizar Producto';
-                          this.producto_id=data['id'];
-                          this.nombre = data['nombre'];
-                          this.costo = data['costo'];
-                          this.direccion_proveedor = data['direccion_proveedor'];
-                          this.tipoAccion = 2;
-                          break;
-                      }
-                  }
-              }
-          }
-      },
-
       /*SERVICIOS ---------------------------*/
-      //LISTADO DE SERVICIOS
-      listarServicio(page, buscarServ, criterioServ){
+      //LISTADO DE PROYECTOS
+      listarServicio(page, buscarCol, criterioCol){
         let me=this;
         //RUTA PARA OBTENER DATOS
-        var url='/servicio?page='+page+'&buscar='+buscarServ+'&criterio='+criterioServ;
+        var url='/colaborador?page='+page+'&buscar='+buscarCol+'&criterio='+criterioCol;
         axios.get(url).then(function (response){
           var respuestaS = response.data;  
-          me.arrayServicio = respuestaS.servicios.data;
-          me.paginationServicios = respuestaS.pagination;
+          me.arrayColaborador = respuestaS.colaboradores.data;
+          me.pagination = respuestaS.pagination;
+        })
+        .catch(function (error){
+          console.log(error);
+        });
+      },
+      //LISTADO DE USUARIOS
+      listarUsuarios(){
+        //var busqueda = id;
+        let me=this;
+        //RUTA PARA OBTENER DATOS
+        var url='/colaboradorUsers';
+        axios.get(url).then(function (response){
+          var respuestaS = response.data;  
+          me.arrayUsuarios = respuestaS;
         })
         .catch(function (error){
           console.log(error);
         });
       },
       //BUSQUEDA
-      cambiarPaginaServ(page,buscarServ,criterioServ){
+      cambiarPaginaServ(page,buscarCol,criterioCol){
         let me = this;
         //Actualiza la página actual
-        me.paginationServicios.current_page = page;
+        me.paginationColab.current_page = page;
         //Envia la petición para visualizar la data de esa página
-        me.listarServicio(page,buscarServ,criterioServ);
+        me.listarServicio(page,buscarCol,criterioCol);
       },
       //ABRIR MODAL REGISTRAR O ACTUALIZAR
       abrirModalServ(modeloServ, accionServ, data=[]){
-          this.selectProducto();//LLAMAR PARA MOSTRAR LISTADO DE ROLES
-          //console.log(data);
+          //this.selectProducto();//LLAMAR PARA MOSTRAR LISTADO DE METODOS
+          this.selectMetodo();
+
           switch(modeloServ){
-              case "servicio":
+              case "tareas":
               {
                   switch(accionServ){
-                      case 'registrar':
-                      {
-                          this.modalServ = 1;
-                          this.tituloModalServ = 'Registrar Servicio';
-                          this.titulo = '';
-                          this.idproducto = 0;
-                          this.tiempo = '';
-                          this.descripcion = '';
-                          this.costoserv = 0.0;
-                          this.tipoAccionServ = 1;
-                          break;
-                      }
                       case 'actualizar':
                       {
                         //console.log(data[idproducto]);
                           this.modalServ = 1;
-                          this.tituloModalServ = 'Actualizar Servicio';
-                          this.servicio_id=data['idserv'];
+                          this.tituloModalServ = 'Actualizar Tarea';
+                          this.idcolaborador=data['iduser'];
                           this.titulo = data['titulo'];
-                          this.idproducto = data['idproducto'];
+                          this.tarea_id = data['id'];
                           this.tiempo = data['tiempo'];
                           this.descripcion = data['descripcion'];
-                          this.costoserv = data['costoserv'];
-                          this.tipoAccionServ = 2;
+                          this.idhito = data['idhito'];
+                          this.condicion = data['condicion'];
+                          this.tipoAccionServ = 1;
                           break;
+                      }
+                      case 'pagar':
+                      {
+                        this.modalServ = 1;
+                        this.tituloModalServ = 'Pagar tarea';
+                        this.idcolaborador = data['iduser'];
+                        this.tarea_id = data['id'];
+                        this.cantidad = 0.0;
+                        this.titulo = data['titulo'];
+                        this.descripcion = data['descripcion'];
+                        this.tipoAccionServ = 2;
+                        break;
                       }
                   }
               }
@@ -812,11 +747,14 @@
         this.errorServ=0;
         this.errorMostrarMsjServ =[];
 
-        if (!this.titulo) this.errorMostrarMsjServ.push("El titulo no puede estar vacío.");
-        if (!this.idproducto) this.errorMostrarMsjServ.push("El nombre de producto no puede estar vacío.");
-        if (!this.tiempo) this.errorMostrarMsjServ.push("El tiempo de operación no puede estar vacío.");
-        if (!this.descripcion) this.errorMostrarMsjServ.push("La descripcion no puede estar vacío.");
-        if (!this.costoserv) this.errorMostrarMsjServ.push("El costo del servicio no puede estar vacío.");
+        if (!this.titulo && this.tipoAccionServ!=2) this.errorMostrarMsjServ.push("El titulo no puede estar vacío.");
+        if (!this.descripcion && this.tipoAccionServ!=2) this.errorMostrarMsjServ.push("La descripcion no puede estar vacía.");
+        if (this.idcolaborador == 0 && this.tipoAccionServ!=2) this.errorMostrarMsjServ.push("Debe escoger un colaborador.");
+        if (!this.inicio && this.tipoAccionServ!=2) this.errorMostrarMsjServ.push("La fecha de inicio no puede estar vacía.");
+        if (!this.fin && this.tipoAccionServ!=2) this.errorMostrarMsjServ.push("La fecha de vencimiento no puede estar vacía.");
+        if (this.idmetodo == 0 && this.tipoAccionServ ==2) this.errorMostrarMsjServ.push("Debe seleccioner un metodo de pago.");
+        if (!this.cantidad && this.tipoAccionServ == 2) this.errorMostrarMsjServ.push("Debe especificar una cantidad.");
+        if (this.yourMoney[0]['dinero']-this.cantidad < 0) this.errorMostrarMsjServ.push("Saldo insuficiente.");
 
         if (this.errorMostrarMsjServ.length) this.errorServ = 1;
 
@@ -830,8 +768,12 @@
           this.idproducto = 0;
           this.tiempo = '';
           this.descripcion = '';
+          this.cantidad = 0.0;
           this.costoserv=0;
           this.errorServ=0;
+          this.inicio='';
+          this.fin='';
+          this.idmetodo = 0;
       },
       selectProducto(){
         let me=this;
@@ -921,16 +863,164 @@
         }
         }) 
       },
-      //ABRIR MODAL VISTA
-      abrirModalVista(data=[]){
-      //console.log(data[idproducto]);
-        this.descripcion = data['descripcion'];
-        this.titulo = data['titulo'];
+      actualizarTarea(){
+        if (this.validarServicio()){
+              return;
+          }
+          
+          let me = this;
+
+          axios.put('/tarea/actualizar',{
+              'titulo': this.titulo,
+              'descripcion': this.descripcion,
+              'iduser' : this.idcolaborador,
+              'inicio': this.inicio,
+              'fin': this.fin,
+              'idhito': this.idhito,
+              'condicion': this.condicion,
+              'id': this.tarea_id
+          }).then(function (response) {
+              me.cerrarModalServ();
+              me.listarProducto(1,'','titulo');
+          }).catch(function (error) {
+              console.log(error);
+          });
       },
+      cancelarTarea(id){
+        swal.fire({
+          title: 'Esta seguro de cancelar o eliminar esta tarea?',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Aceptar!',
+          cancelButtonText: 'Cancelar',
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass: 'btn btn-danger',
+          buttonsStyling: false,
+          reverseButtons: true
+          }).then((result) => {
+          if (result.value) {
+              let me = this;
+
+            axios.put('/tarea/cancelar',{
+                'id': id
+            }).then(function (response) {
+                me.listarProducto(1,'','titulo');
+                swal.fire(
+                'Hecho!',
+                'Tarea cancelada.',
+                'success'
+                )
+            }).catch(function (error) {
+                console.log(error);
+            });
+            
+            
+        } else if (
+            // Read more about handling dismissals
+            result.dismiss === swal.DismissReason.cancel
+        ) {
+            
+        }
+        })
+      },
+      completarTarea(id){
+        swal.fire({
+          title: 'Marcar como completa esta tarea?',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Aceptar!',
+          cancelButtonText: 'Cancelar',
+          confirmButtonClass: 'btn btn-success',
+          cancelButtonClass: 'btn btn-danger',
+          buttonsStyling: false,
+          reverseButtons: true
+          }).then((result) => {
+          if (result.value) {
+              let me = this;
+
+            axios.put('/tarea/completar',{
+                'id': id
+            }).then(function (response) {
+                me.listarProducto(1,'','titulo');
+                swal.fire(
+                'Hecho!',
+                'Tarea completada.',
+                'success'
+                )
+            }).catch(function (error) {
+                console.log(error);
+            });
+            
+            
+        } else if (
+            // Read more about handling dismissals
+            result.dismiss === swal.DismissReason.cancel
+        ) {
+            
+        }
+        })
+      },
+      selectMetodo(){
+        let me=this;
+        var url= '/metodos/selectMetodo';
+        axios.get(url).then(function (response) {
+           //console.log(response.data);
+            var respuesta= response.data;
+            me.arrayMetodos = respuesta.metodos;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+      },
+      pagarTarea(){
+        if (this.validarServicio()){
+            return;
+        }
+        
+        let me = this;
+
+        axios.put('/tarea/pagar',{
+            'id': this.tarea_id,
+            'iduser': this.idcolaborador,
+            'cantidad': this.cantidad,
+            'titulo': this.titulo,
+            'descripcion': this.descripcion,
+            'idmetodo': this.idmetodo
+        }).then(function (response) {
+            me.cerrarModal();
+            me.listarProducto(1,'','nombre');
+            me.getMoney();
+            swal.fire(
+                'Hecho!',
+                'Pago realizado.',
+                'success'
+                )
+        }).catch(function (error) {
+            console.log(error);
+        });
+      },
+      getMoney(){
+        let me=this;
+        //RUTA PARA OBTENER DATOS
+        var url='/carteraAuth';
+        axios.get(url).then(function (response){
+          var respuesta = response.data;  
+          me.yourMoney = respuesta;
+        })
+        .catch(function (error){
+          console.log(error);
+        });
+      }
     },
     mounted (){
       this.listarProducto(1,this.buscar,this.criterio);
-      this.listarServicio(1,this.buscarServ,this.criterioServ);
+      this.listarServicio(1,this.buscarCol,this.criterioCol);
+      this.listarUsuarios();
+      this.getMoney();
     }
   }
 </script>

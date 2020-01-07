@@ -3,125 +3,113 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Pagos;
+use App\Pago;
 use App\User;
 use App\MetodoPago;
 use Illuminate\Support\Facades\DB;
 
 class PagosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $pagos = Pagos::all();
-        $datos = [];
-        $usuarios = [];
-        $metodos = [];
-      foreach($pagos as $key => $pago){
-          $usuario = User::where('id', $pago->id_usuario)->first();
-          $nombre = $usuario->nombre . ' ' . $usuario->apellido_p . ' ' . $usuario->apellido_m;
-          $metodo = MetodoPago::where('id', $pago->id_metodo)->first()->nombre_met;
-          
-          array_push($datos, ['id'=> $pago->id, 'codigo_retiro'=>$pago->codigo_retiro, 'monto'=>$pago->monto, 'condicion'=>$pago->condicion, 'monto_final'=> $pago->monto_final, 'usuario'=>$nombre, 'metodo'=>$metodo, 'id_usuario'=>$pago->id_usuario, 'id_metodo'=> $pago->id_metodo]);
-        }
-    
+    public function index(Request $request){
+
+      if(!$request->ajax()) return redirect('/');
+
+      $buscar = $request->buscar;
+      $criterio = $request->criterio;
+
+      if($buscar == ''){
         
-//       dd($usuarios, $metodos);
-//         dd($datos);
+        $pagos = Pago::join('users as acreedor', 'pagos.idacreedor', '=', 'acreedor.id')
+                     ->join('users as paga', 'pagos.idpaga', '=', 'paga.id')
+                     ->join('metodos_pago as metodo', 'pagos.idmetodo', '=', 'metodo.id')
+        ->select('pagos.id', 'pagos.fecha_pago', 'pagos.asunto', 'pagos.descripcion',
+          'acreedor.id as acreedor_id', 'acreedor.name as a_name', 'acreedor.apellido_p as a_ap',
+          'paga.id as paga_id', 'paga.name as p_name', 'paga.apellido_p as p_ap', 'metodo.id',
+          'metodo.nombre', 'pagos.monto')
+        ->orderBy('pagos.id')->paginate(4);
+      }else{
+        $pagos = Pago::join('users as acreedor', 'pagos.idacreedor', '=', 'acreedor.id')
+                     ->join('users as paga', 'pagos.idpaga', '=', 'paga.id')
+                     ->join('metodos_pago as metodo', 'pagos.idmetodo', '=', 'metodo.id')
+        ->select('pagos.id', 'pagos.fecha_pago', 'pagos.asunto', 'pagos.descripcion',
+          'acreedor.id as acreedor_id', 'acreedor.name as a_name', 'acreedor.apellido_p as a_ap',
+          'paga.id as paga_id', 'paga.name as p_name', 'paga.apellido_p as p_ap', 'metodo.id',
+          'metodo.nombre', 'pagos.monto')
+        ->where('pagos.'.$criterio, 'like', '%'. $buscar.'%')
+        ->orderBy('pagos.id')->paginate(4);
+      }
+
+      return [
+          'pagination' => [
+              'total' =>        $pagos->total(),
+              'current_page' => $pagos->currentPage(),
+              'per_page' =>     $pagos->perPage(),
+              'last_page' =>    $pagos->lastPage(),
+              'from' =>         $pagos->firstItem(),
+              'to' =>           $pagos->lastItem(),
+          ],
+          'pagos'=>$pagos
+      ];
+    }
+
+    public function listarPdf(Request $request){
+      $pagos = Pago::join('users as acreedor', 'pagos.idacreedor', '=', 'acreedor.id')
+                     ->join('users as paga', 'pagos.idpaga', '=', 'paga.id')
+                     ->join('metodos_pago as metodo', 'pagos.idmetodo', '=', 'metodo.id')
+        ->select('pagos.id', 'pagos.fecha_pago', 'pagos.asunto', 'pagos.descripcion',
+          'acreedor.id as acreedor_id', 'acreedor.name as a_name', 'acreedor.apellido_p as a_ap',
+          'paga.id as paga_id', 'paga.name as p_name', 'paga.apellido_p as p_ap', 'metodo.id',
+          'metodo.nombre', 'pagos.monto')
+        ->orderBy('pagos.fecha_pago')->get();
+
+      $cont = Pago::count();
+
+      $pdf = \PDF::loadView('pdf.pagospdf', ['pagos'=>$pagos, 'count'=>$cont]);
+      return $pdf->download('pagos.pdf');
+    }
+
+    public function indexAuth(Request $request){
+
+      if(!$request->ajax()) return redirect('/');
+
+      $buscar = $request->buscar;
+      $criterio = $request->criterio;
+
+      if($buscar == ''){
         
-        return $datos;
-    }
-
-  
-    public function usuarios(){
-      $users = User::all();
-      $usuarios = [];
-      foreach($users as $key => $user){
-        $nombre = $user->nombre . ' ' . $user->apellido_p . ' ' . $user->apellido_m;
-        array_push($usuarios, ['id'=> $user->id, 'nombre' => $nombre]);
+        $pagos = Pago::join('users as acreedor', 'pagos.idacreedor', '=', 'acreedor.id')
+                     ->join('users as paga', 'pagos.idpaga', '=', 'paga.id')
+                     ->join('metodos_pago as metodo', 'pagos.idmetodo', '=', 'metodo.id')
+        ->select('pagos.id', 'pagos.fecha_pago', 'pagos.asunto', 'pagos.descripcion',
+          'acreedor.id as acreedor_id', 'acreedor.name as a_name', 'acreedor.apellido_p as a_ap',
+          'paga.id as paga_id', 'paga.name as p_name', 'paga.apellido_p as p_ap', 'metodo.id',
+          'metodo.nombre', 'pagos.monto')
+        ->where('acreedor.id', 'like', auth()->id())
+        ->orWhere('paga.id', 'like', auth()->id())
+        ->orderBy('pagos.id')->paginate(4);
+      }else{
+        $pagos = Pago::join('users as acreedor', 'pagos.idacreedor', '=', 'acreedor.id')
+                     ->join('users as paga', 'pagos.idpaga', '=', 'paga.id')
+                     ->join('metodos_pago as metodo', 'pagos.idmetodo', '=', 'metodo.id')
+        ->select('pagos.id', 'pagos.fecha_pago', 'pagos.asunto', 'pagos.descripcion',
+          'acreedor.id as acreedor_id', 'acreedor.name as a_name', 'acreedor.apellido_p as a_ap',
+          'paga.id as paga_id', 'paga.name as p_name', 'paga.apellido_p as p_ap', 'metodo.id',
+          'metodo.nombre', 'pagos.monto')
+        -where('acreedor_id', 'like', auth()->id())
+        ->where('pagos.'.$criterio, 'like', '%'. $buscar.'%')
+        ->orderBy('pagos.id')->paginate(4);
       }
-      return $usuarios;
-    }
-  
-    public function metodos(){
-      $metodos = [];
-      $metodos_ = MetodoPago::all();
-      
-      foreach($metodos_ as $key => $metodo){
-        array_push($metodos, ['id'=> $metodo->id, 'nombre_metodo' => $metodo->nombre_met]);
-      }
-      return $metodos;
-    }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-//         dd($request->all());
-        $pago = new Pagos();
-        $pago->codigo_retiro = $request->codigo_retiro;
-        $pago->monto = $request->monto;
-        $pago->monto_final = $request->monto_final;
-        $pago->id_usuario = '3';
-        $pago->id_metodo = '1';
-        $pago->condicion = '1';
-        $pago->save();
-    }
 
-    public function update(Request $request)
-    {
-        if(!$request->ajax()) return redirect('/');
-        //
-        try {
-//           dd($request->all());
-            DB::beginTransaction();
-            
-            $pago = Pagos::findOrFail($request->id);
-            $pago->codigo_retiro = $request->codigo_retiro;
-            $pago->monto = $request->monto;
-            $pago->monto_final = $request->monto_final;
-            $pago->id_usuario = '3';
-            $pago->id_metodo = '1';
-            $pago->condicion = '1';
-            $pago->save();
-
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-        }
-    }
-
-    /*DESACTIVAR PRODUCTO*/
-    public function desactivar(Request $request){
-
-        if(!$request->ajax()) return redirect('/');
-        $user = Pagos::findOrFail($request->id);
-        $user->condicion = '0';
-        $user->save();
-    }
-
-    /*ACTIVAR PRODUCTO*/
-    public function activar(Request $request){
-
-        if(!$request->ajax()) return redirect('/');
-        $user = Pagos::findOrFail($request->id);
-        $user->condicion = '1';
-        $user->save();
-    }
-
-    //LISTA SIMPLE
-    public function selectProducto(Request $request){
-        $productos = Producto::select('id', 'nombre')
-        ->orderBy('id', 'asc')->get();
-
-        return ['productos' => $productos];
+      return [
+          'pagination' => [
+              'total' =>        $pagos->total(),
+              'current_page' => $pagos->currentPage(),
+              'per_page' =>     $pagos->perPage(),
+              'last_page' =>    $pagos->lastPage(),
+              'from' =>         $pagos->firstItem(),
+              'to' =>           $pagos->lastItem(),
+          ],
+          'pagos'=>$pagos
+      ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\MetodoPago;
+use Illuminate\Support\Facades\DB;
 
 class MetodoPagoController extends Controller
 {
@@ -12,10 +13,33 @@ class MetodoPagoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $MetodoPago = MetodoPago::all();
-        return $MetodoPago;
+        if(!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+        if($buscar==''){
+            $metodos = MetodoPago::select('id', 'nombre', 'logo', 'condicion')
+              ->orderBy('id')->paginate(4);
+        }else{
+            $metodos = MetodoPago::select('id', 'nombre', 'logo', 'condicion')
+            ->where($criterio, 'like', '%'. $buscar.'%')
+            ->orderBy('id')->paginate(4);
+        }
+
+        return [
+            'pagination' => [
+                'total' =>        $metodos->total(),
+                'current_page' => $metodos->currentPage(),
+                'per_page' =>     $metodos->perPage(),
+                'last_page' =>    $metodos->lastPage(),
+                'from' =>         $metodos->firstItem(),
+                'to' =>           $metodos->lastItem(),
+            ],
+            'metodos'=>$metodos
+        ];
     }
 
     /**
@@ -26,17 +50,39 @@ class MetodoPagoController extends Controller
      */
     public function store(Request $request)
     {
-        $MetodoPago = new MetodoPago();
-        $MetodoPago->nombre_met = $request->nombre_met;
-        $MetodoPago->monto_min = $request->monto_min;
-        $MetodoPago->monto_max = $request->monto_max;
-        $MetodoPago->gasto_fijo = $request->gasto_fijo;
-        $MetodoPago->porcentaje_cargo = $request->porcentaje_cargo;
-        $MetodoPago->tasa_interes = $request->tasa_interes;
-        $MetodoPago->tipo_moneda = $request->tipo_moneda;
-        $MetodoPago->img = $request->img;
-        $MetodoPago->dias_de_proceso = $request->dias_de_proceso;
-        $MetodoPago->save();
+        /*Guardar imagen en carpeta public*/
+        if(!$request->ajax()) return redirect('/');
+
+        $exploded = explode(',', $request->logo);
+        
+        $decoded = base64_decode($exploded[1]);
+
+        if(str_contains($exploded[0], 'jpeg')){
+            $extension = 'jpg';
+        }else{
+            $extension = 'png';
+        }
+
+        $fileName = str_replace(' ', '_',$request->nombre).'.'.$extension;
+
+        $path = public_path().'/'.$fileName;
+        file_put_contents($path, $decoded);
+
+        try{
+            //REGISTRO EN LA TABLA METODOS DE PAGO
+            DB::beginTransaction();
+                
+                $MetodoPago = new MetodoPago();
+                $MetodoPago->nombre = $request->nombre;
+                $MetodoPago->logo = $fileName;
+                $MetodoPago->condicion = '1';
+                $MetodoPago->save();
+            
+            DB::commit();
+
+        }catch(Exception $e){
+            DB::rollBack();
+        }
     }
 
     /**
@@ -48,17 +94,20 @@ class MetodoPagoController extends Controller
      */
     public function update(Request $request)
     {
-        $MetodoPago = MetodoPago::findOrFail($request->id);
-        $MetodoPago->nombre_met = $request->nombre_met;
-        $MetodoPago->monto_min = $request->monto_min;
-        $MetodoPago->monto_max = $request->monto_max;
-        $MetodoPago->gasto_fijo = $request->gasto_fijo;
-        $MetodoPago->porcentaje_cargo = $request->porcentaje_cargo;
-        $MetodoPago->tasa_interes = $request->tasa_interes;
-        $MetodoPago->tipo_moneda = $request->tipo_moneda;
-        $MetodoPago->img = $request->img;
-        $MetodoPago->dias_de_proceso = $request->dias_de_proceso;
-        $MetodoPago->save();
+        if(!$request->ajax()) return redirect('/');
+
+        try {
+            DB::beginTransaction();
+            $MetodoPago = MetodoPago::findOrFail($request->id);
+            $MetodoPago->nombre = $request->nombre;
+            $MetodoPago->logo = $request->logo;
+            $MetodoPago->condicion = '1';
+            $MetodoPago->save();
+            DB::commit();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
     }
 
     public function desactivar(Request $request)
@@ -75,5 +124,12 @@ class MetodoPagoController extends Controller
         $MetodoPago->save();
     }
 
+    //LISTA SIMPLE
+    public function selectMetodo(Request $request){
+        $metodos = MetodoPago::select('id', 'nombre')
+        ->orderBy('id', 'asc')->get();
+        return ['metodos' => $metodos];
+    }
 
+    
 }

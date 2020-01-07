@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Colaborador;
+use App\Cartera;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -105,6 +107,11 @@ class UserController extends Controller
             $user->idrol = $request->idrol;
             $user->save();
 
+            $cartera = new Cartera();
+            $cartera->iduser = $user->id;
+            $cartera->dinero = '0';
+            $cartera->save();
+
             DB::commit();
 
         }catch(Exception $e){
@@ -170,6 +177,19 @@ class UserController extends Controller
         $users = User::select('id', 'name')
         ->where('idrol', 'like', '3')
         ->orderBy('id', 'asc')->get();
+        return ['users' => $users];
+    }
+    
+    //LISTA SIMPLE
+    public function selectProgramadorTarea(Request $request){
+
+        $idproyecto = $request->idproyecto;
+
+        $users = Colaborador::join('users', 'colaboradores.idcolaborador', '=', 'users.id')
+        ->select('users.id', 'users.name')
+        ->where('users.idrol', 'like', '3')
+        ->where('colaboradores.idproyecto', 'like', $idproyecto)
+        ->orderBy('users.id', 'asc')->get();
         return ['users' => $users];
     }
 }

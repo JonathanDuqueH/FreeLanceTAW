@@ -5,13 +5,13 @@
       <li @click="menu=0"><a href="#"><i class="fa fa-pie-chart"></i>Dashboard</a></li>
       <li><a class="nav-link text-muted" tags="Quick Access"><i class="fa fa-dashboard"></i> Acceso Rápido <span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
-          <li @click="menu=1"><a href="#"><i class="fa-tasks fa"></i>Asignados para mi</a></li>
+          <!--<li @click="menu=1"><a href="#"><i class="fa-tasks fa"></i>Asignados para mi</a></li>
           <li @click="menu=2"><a href="#"><i class="fa fa-life-bouy"></i>Mis tickets de soporte</a></li>
-          <li @click="menu=3"><a href="#"><i class="fa fa-wrench"></i>Mis solicitudes de servicio</a></li>
+          <li @click="menu=3"><a href="#"><i class="fa fa-wrench"></i>Mis solicitudes de servicio</a></li>-->
           <li @click="menu=4"><a href="#"><i class="fa-th-list fa"></i>Mis proyectos</a></li>
-          <li @click="menu=5"><a href="#"><i class="fa fa-calendar"></i>Calendario</a></li>
+          <!--<li @click="menu=5"><a href="#"><i class="fa fa-calendar"></i>Calendario</a></li>-
           <li @click="menu=6"><a href="#"><i class="fa fa-life-bouy"></i>Tickets de soporte</a></li>
-          <li @click="menu=7"><a href="#"><i class="fa fa-wrench"></i>Solicitudes de servicio</a></li>
+          <li @click="menu=7"><a href="#"><i class="fa fa-wrench"></i>Solicitudes de servicio</a></li>-->
         </ul>
       </li>
       <!--<h3 class="nav-link text-muted" tags="Quick Access">Acceso Rápido</h3>-->
@@ -25,12 +25,12 @@
       </li>
       <li><a  class="nav-link text-muted" tags="Ventas y Pagos"><i class="fa fa-credit-card"></i>Ventas y Pagos<span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
-          <li @click="menu=12"><a href="#"><i class="fa fa-list-alt"></i>Facturas</a></li>
           <li @click="menu=22"><a href="#"><i class="fa fa-money"></i>Métodos de pago</a></li>
           <li @click="menu=13"><a href="#"><i class="fa fa-money"></i>Pagos</a></li>
         </ul>
       </li>
-      <li><a  class="nav-link text-muted" tags="Contenido"><i class="fa fa-cloud-upload"></i>Contenido<span class="fa fa-chevron-down"></span></a>
+      <li><a  class="nav-link text-muted" tags="Contenido"><i class="fa fa-cloud-upload"></i>Contenido<span></span></a></li>
+      <!--<li><a  class="nav-link text-muted" tags="Contenido"><i class="fa fa-cloud-upload"></i>Contenido<span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
           <li @click="menu=14"><a href="#"><i class="fa fa-newspaper-o"></i>Articulos</a></li>
           <li @click="menu=15"><a href="#"><i class="fa fa-rss"></i>Publicaciones</a></li>
@@ -38,7 +38,7 @@
           <li @click="menu=17"><a href="#"><i class="fa fa-question-circle"></i>Preguntas Frecuentes</a></li>
           <li @click="menu=18"><a href="#"><i class="fa fa-files-o"></i>Menú y páginas</a></li>
         </ul>
-      </li>
+      </li>-->
       <li><a  class="nav-link text-muted" tags="Usuarios"><i class="fa fa-users"></i>Usuarios<span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
           <li @click="menu=19"><a href="#"><i class="fa fa-building"></i>Compañias/Clientes</a></li>

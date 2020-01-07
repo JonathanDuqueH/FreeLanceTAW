@@ -13,6 +13,12 @@ class hito extends Model
     public function proyectos(){
         return $this->hasMany('App\Proyecto');
     }
+
+    #UN HITO PUEDE TENER MUCHAS TAREAS
+    public function tareaslista(){
+        return $this->hasMany('App\Tarea');
+    }
+
     #UN HITO PERTENECE A UN PROYECTO
     public function user(){
         return $this->belongsTo('App\Proyecto');

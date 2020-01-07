@@ -51,13 +51,15 @@ Vue.component('preguntas', require('./components/Preguntas.vue').default);
 Vue.component('menupaginas', require('./components/Menupaginas.vue').default);
 Vue.component('metodospago', require('./components/MetodosPago.vue').default);
 // Vue.component('proyectosM', require('./components/ProyectosM.vue').default);
-Vue.component('proyectosC', require('./components/ProyectosC.vue').default);
-
-
-Vue.component('spinner', require('./components/spinner.vue'));
-
-
-
+Vue.component('c', require('./components/ProyectosC.vue').default);
+Vue.component('reportes', require('./components/Reportes.vue').default);
+Vue.component('reportesm', require('./components/ReportesManager.vue').default);
+Vue.component('pagosd', require('./components/PagosD.vue').default);
+Vue.component('proyectospm', require('./components/ProyectosPM.vue').default);
+Vue.component('hitospm', require('./components/HitosPM.vue').default);
+Vue.component('laborespm', require('./components/LaboresPM.vue').default);
+Vue.component('pagospm', require('./components/PagosPM.vue').default);
+Vue.component('pagosc', require('./components/PagosC.vue').default);
 
 
 /*----------*/

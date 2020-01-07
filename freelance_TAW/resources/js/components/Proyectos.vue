@@ -230,7 +230,7 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="titulodepartamento">Título de hito: <span class="required">*</span>
                 </label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="titulo" placeholder="Escriba titulo del nuevo proyecto" required="required" type="text">
+                  <input v-model="titulo" class="form-control col-md-7 col-xs-12" data-validate-length-range="50" name="titulo" placeholder="Escriba titulo del nuevo hito" required="required" type="text">
                 </div>
               </div>
               <div class="item form-group">
@@ -268,7 +268,7 @@
         </div>
         <div class="modal-footer">
             <button @click="cerrarModal()" type="button" class="btn btn-primary" >Cancelar</button>
-            <button v-if="tipoAccion==1" @click="registrarProyecto()" type="button" class="btn btn-success">Guardar</button>
+            <button v-if="tipoAccion==1" @click="registrarProyecto();" type="button" class="btn btn-success">Guardar</button>
             <button v-if="tipoAccion==2" @click="actualizarProyecto()" type="button" class="btn btn-success">Actualizar</button>
             <button v-if="tipoAccion==3" @click="anadirHito()" type="button" class="btn btn-success">Añadir</button>
             <button v-if="tipoAccion==4" @click="anadirUsuario()" type="button" class="btn btn-success">Añadir</button>
@@ -373,6 +373,7 @@ export default{
           console.log(respuesta);
           me.arrayProyecto = respuesta.proyecto.data;
           me.pagination = respuesta.pagination;
+          
       })
       .catch(function (error){
       console.log(error);
@@ -489,11 +490,11 @@ export default{
       this.errorProyecto=0;
       this.errorMostrarMsjProyecto =[];
 
-      if (!this.titulo) this.errorMostrarMsjProyecto.push("El titulo no puede estar vacío.");
-      if (!this.descripcion) this.errorMostrarMsjProyecto.push("Por favor agregue una descripción.");
-      if (this.iduser==0 && this.tipoAccion!=3) this.errorMostrarMsjProyecto.push("Seleccione un cliente.");
-      if (!this.inicio) this.errorMostrarMsjProyecto.push("Por favor indique la fecha de inicio.");
-      if (!this.fin) this.errorMostrarMsjProyecto.push("Por favor indique la fecha de finalizacion.");
+      if (!this.titulo && this.tipoAccion !=4) this.errorMostrarMsjProyecto.push("El titulo no puede estar vacío.");
+      if (!this.descripcion &&  this.tipoAccion !=4) this.errorMostrarMsjProyecto.push("Por favor agregue una descripción.");
+      if (this.iduser==0 && this.tipoAccion !=3) this.errorMostrarMsjProyecto.push("Seleccione un cliente.");
+      if (!this.inicio &&  this.tipoAccion !=4) this.errorMostrarMsjProyecto.push("Por favor indique la fecha de inicio.");
+      if (!this.fin && this.tipoAccion !=4) this.errorMostrarMsjProyecto.push("Por favor indique la fecha de finalizacion.");
 
       if (this.errorMostrarMsjProyecto.length) this.errorProyecto = 1;
 
@@ -516,6 +517,7 @@ export default{
       }).then(function (response) {
           me.cerrarModal();
           me.listarProyecto(1,'','titulo');
+          me.registrarColaborador();
       }).catch(function (error) {
           console.log(error);
       });
@@ -647,6 +649,24 @@ export default{
         me.pagination.current_page = page;
         //Envia la petición para visualizar la data de esa página
         me.listarProyecto(page,buscar,criterio);
+    },
+    //REGISTRAR PROYECTO
+    anadirUsuario(){
+      if (this.validarProyecto()){
+          return;
+      }
+      
+      let me = this;
+
+      axios.post('/colaborador/registrar',{
+          'idproyecto': this.proyecto_id,
+          'iduser': this.iduser
+      }).then(function (response) {
+          me.cerrarModal();
+          me.listarProyecto(1,'','titulo');
+      }).catch(function (error) {
+          console.log(error);
+      });
     }
   },
   mounted (){

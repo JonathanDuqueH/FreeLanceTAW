@@ -79,7 +79,7 @@
         <asignadosparami></asignadosparami>
     </template>
     <template v-if="menu==2">
-        <mis_tickets></mis_tickets>
+        <reportesm></reportesm>
     </template>
     <template v-if="menu==3">
         <example-component></example-component>
@@ -140,6 +140,18 @@
     </template>
     <template v-if="menu==21">
         <usuarios></usuarios>
+    </template>
+    <template v-if="menu==24">
+        <proyectospm></proyectospm>
+    </template>
+    <template v-if="menu==25">
+        <hitospm></hitospm>
+    </template>
+    <template v-if="menu==26">
+        <laborespm></laborespm>
+    </template>
+    <template v-if="menu==27">
+        <pagospm></pagospm>
     </template>
     @elseif(Auth::user()->idrol == 3)
     <template v-if="menu==0">
@@ -211,6 +223,9 @@
     <template v-if="menu==21">
         <usuarios></usuarios>
     </template>
+    <template v-if="menu==23">
+        <pagosd></pagosd>
+    </template>
     @elseif(Auth::user()->idrol == 4)
     <template v-if="menu==0">
         <dashboard></dashboard>
@@ -237,10 +252,10 @@
         <solicitudes></solicitudes>
     </template>
     <template v-if="menu==8">
-        <proyectos></proyectos>
+        <c></c>
     </template>
     <template v-if="menu==9">
-        <example-component></example-component>
+        <reportes></reportes>
     </template>
     <template v-if="menu==10">
         <labores></labores>
@@ -280,6 +295,9 @@
     </template>
     <template v-if="menu==21">
         <usuarios></usuarios>
+    </template>
+    <template v-if="menu==28">
+        <pagosc></pagosc>
     </template>
     @else
     @endif
