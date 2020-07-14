@@ -29,7 +29,7 @@
             	<div class="top-left">
                 	<ul class="clearfix">
                       <!--  <li>Contactanos: @injection('page')</li>-->
-                    	<li>Contactanos: 1630035@upv.edu.mx</li>
+                    	<li>Contactanos: 1630206@upv.edu.mx</li>
                         <li>Whatsapp: 831-103-0571</li>
                         <!--ACCEDIENDO CON VARIABLE GLOBAL-->
                          <!--<li>831-103-0571</li>
